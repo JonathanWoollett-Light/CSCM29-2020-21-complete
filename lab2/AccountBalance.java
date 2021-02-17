@@ -109,9 +109,14 @@ public class AccountBalance {
      *    but is intended to be a TxEntryListList converted into an 
      *    AccountBalance to check whether it can be deducted.
      */
-//    public boolean checkAccountBalanceDeductable(AccountBalance amountToCheckForDeduction){
-//	    // ...
-//    }
+    public boolean checkAccountBalanceDeductable(AccountBalance amountToCheckForDeduction){
+        for(Map.Entry<String,Integer> entry: amountToCheckForDeduction.getAccountBalanceBase().entrySet()) {
+            if (!this.checkBalance(entry.getKey(),entry.getValue())) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
      *
@@ -125,9 +130,9 @@ public class AccountBalance {
      *     and then checking that the resulting accountBalance can be deducted.
      *
      */
-//    public boolean checkTxELdeductable(TxEntryList txel){
-//	    // ...
-//    }
+    public boolean checkTxELdeductable(TxEntryList txel){
+        return this.checkAccountBalanceDeductable(txel.toAccountBalance());
+    }
 
     /**
      * Task 3: Fill in the methods subtractTxEL and  addTxEL.
@@ -137,14 +142,15 @@ public class AccountBalance {
      * requires that the list to be deducted is deductable.
      */
     public void subtractTxEL(TxEntryList txel) {
-        // ...
+        assert this.checkTxELdeductable(txel);
+        txel.toList().forEach((tx) -> this.subtractBalance(tx.getUser(),tx.getAmount()));
     }
 
     /**
      * Add a list of txEntries (txel, usually transaction outputs) to the current accountBalance
      */
     public void addTxEL(TxEntryList txel) {
-        // ...
+        txel.toList().forEach((tx) -> this.addBalance(tx.getUser(),tx.getAmount()));
     }
 
     /**
@@ -157,9 +163,9 @@ public class AccountBalance {
      *    and the inputs can be deducted from the accountBalance.
      *
      */
-//    public boolean checkTxValid(Tx tx){
-//	    // ...
-//    }
+    public boolean checkTxValid(Tx tx){
+        return tx.checkTxAmountsValid() && this.checkTxELdeductable(tx.toInputs());
+    }
 
     /**
      * Task 5: Fill in the method processTx
@@ -168,10 +174,10 @@ public class AccountBalance {
      * by first deducting all the inputs
      * and then adding all the outputs.
      */
-
-//    public void processTx(Tx tx) {
-//        // ...
-//    }
+    public void processTx(Tx tx) {
+        this.subtractTxEL(tx.toInputs());
+        this.addTxEL(tx.toOutputs());
+    }
 
     /**
      * Prints the current state of the accountBalance.
@@ -189,7 +195,90 @@ public class AccountBalance {
      * Testcase
      */
     public static void test() {
-        // ...
+        // Create an emptyAccountBalance and add to it users Alice,
+        //  Bob, Carol, David, ini-tialised with the amount 0 for each user,
+        AccountBalance accoutBalance = new AccountBalance();
+        accoutBalance.addAccount("Alice",0);
+        accoutBalance.addAccount("Carol",0);
+        accoutBalance.addAccount("David",0);
+
+        // set the balance for Alice to 20,
+        accoutBalance.setBalance("Alice",20);
+
+        // set the balance for Bob to 15,
+        accoutBalance.setBalance("Bob",15);
+
+        // subtract 5 from the balance of Bob,
+        accoutBalance.subtractBalance("Bob",5);
+
+        // check whether theTxEntryList txel1 giving Alice 15 units,
+        //  and Bob 5 units can be deducted,
+        TxEntryList txel1 = new TxEntryList(
+            "Alice",
+            15,
+            "Bob",
+            5
+        );
+        System.out.println("txel1:"+accoutBalance.checkTxELdeductable(txel1));
+
+        // check whether theTxEntryList txel2 giving Alice 15 units,
+        //  and giving Alice again15 units can be deducted,
+        TxEntryList txel2 = new TxEntryList(
+                "Alice",
+                15,
+                "Alice",
+                15
+        );
+        System.out.println("txel2:"+accoutBalance.checkTxELdeductable(txel2));
+
+        // deduct txel1from the ledger
+        accoutBalance.subtractTxEL(txel1);
+
+        // add txel2to the ledger
+        accoutBalance.addTxEL(txel2);
+
+        // Create a transaction tx1 which takes as input for Alice 40 units
+        //  and gives Bob 5 and Carol 20 units.
+        Tx tx1 = new Tx(
+            new TxEntryList("Alice",40),
+            new TxEntryList("Bob",5,"Carol",20)
+        );
+
+        // Check whether it is valid.
+        System.out.println("tx1:"+accoutBalance.checkTxValid(tx1));
+
+        // Create a transaction tx2 which takes as input for Alice 20 units
+        //  and gives Bob 5 and Carol 20 units
+        Tx tx2 = new Tx(
+            new TxEntryList("Alice",20),
+            new TxEntryList("Bob",5,"Carol",20)
+        );
+
+        // Check whether it is valid.
+        System.out.println("tx2:"+accoutBalance.checkTxValid(tx2));
+
+        // Create a transaction tx3 which takes as input for Alice 25 units
+        // and gives Bob 5 and Carol 20 units
+        Tx tx3 = new Tx(
+            new TxEntryList("Alice",25),
+            new TxEntryList("Bob",5,"Carol",20)
+        );
+
+        // Check whether it is valid.
+        System.out.println("tx3:"+accoutBalance.checkTxValid(tx3));
+
+        // UpdateAccountBalance by processing tx3.
+        accoutBalance.processTx(tx3);
+
+        // Create a transaction tx4 which takes as inputs for Alice twice 5
+        //  units, and as output to Baob 10 units.
+        Tx tx4 = new Tx(
+            new TxEntryList("Alice",5,"Alice",5),
+            new TxEntryList("Bob",10) // Presuming `Baob` is meant to be `Bob`
+        );
+
+        // UpdateAccountBalance by processing tx4.
+        accoutBalance.processTx(tx4);
     }
 
     /**
