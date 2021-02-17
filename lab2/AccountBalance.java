@@ -71,7 +71,6 @@ public class AccountBalance {
         setBalance(user, getBalance(user) - amount);
     }
 
-
     // Check balance has at least amount for {@code user}
     public boolean checkBalance(String user, int amount) {
         return (getBalance(user) >= amount);
