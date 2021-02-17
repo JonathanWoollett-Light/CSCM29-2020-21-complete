@@ -2,132 +2,82 @@ import java.util.TreeMap;
 import java.util.Map;
 import java.util.Set;
 
-
-/** 
-  *   AccountBalance defines the balance of the users at a given time
-      in the ledger model of bitcoins
-  */
-
+// AccountBalance defines the balance of the users at a given time
+//  in the ledger model of bitcoins.
 public class AccountBalance {
-
-    /** 
-     * The current balance of each user, with each account's name mapped to its 
-     *    current balance.
-     */
-    
+    // The current balance of each user, with each account's name mapped to its
+    //  current balance.
     private TreeMap<String, Integer> accountBalanceBase;
 
-    /** 
-     * Constructor for creating empty AccountBalance
-     */
-
+    // Constructor for creating empty AccountBalance.
     public AccountBalance() {
-	accountBalanceBase = new TreeMap<String, Integer>();
+        accountBalanceBase = new TreeMap<String, Integer>();
     }
 
-    /** 
-     * Constructor for creating AccountBalance from a map from string to integers
-     */
-    
+    // Constructor for creating AccountBalance from a map from string to integers.
     public AccountBalance(TreeMap<String, Integer> accountBalanceBase) {
-	this.accountBalanceBase = accountBalanceBase;
+        this.accountBalanceBase = accountBalanceBase;
     }
 
-    /** 
-     * obtain the underlying Treemap from string to integers
-     */   
-    
-    public TreeMap<String,Integer> getAccountBalanceBase(){
-	return accountBalanceBase;
-    };
+    // Obtain the underlying Treemap from string to integers.
+    public TreeMap<String, Integer> getAccountBalanceBase() {
+        return accountBalanceBase;
+    }
 
-    /** 
-      * obtain the list of users in the tree map
-      */   
-    
-    public Set<String> getUsers(){
-	return getAccountBalanceBase().keySet();
-    };    
+    // Obtain the list of users in the tree map.
+    public Set<String> getUsers() {
+        return getAccountBalanceBase().keySet();
+    }
 
-    
-    
-
-    /** 
-     * Adds an account for user with balance.
-     *
-     * if there was an entry it is overridden.  
-     */
-
+    // Adds an account for user with balance.
+    // <p>
+    // if there was an entry it is overridden.
     public void addAccount(String user, int balance) {
-	accountBalanceBase.put(user, balance);
+        accountBalanceBase.put(user, balance);
     }
 
-    /** 
-     * @return true if the {@code user} exists in AccountBalance
-     */
-    
+    // @return true if the {@code user} exists in AccountBalance
     public boolean hasUser(String user) {
-	return accountBalanceBase.containsKey(user);
+        return accountBalanceBase.containsKey(user);
     }
 
-
-    /** 
-     * @return the balance for this account {@code account}
-     *
-     *  if there was no entry, return zero
-     *
-     */
-    
+    // @return the balance for this account {@code account}
+    // <p>
+    // if there was no entry, return zero
     public int getBalance(String user) {
-	if (hasUser(user)){
-		return accountBalanceBase.get(user);
-	    } else
-	    {  return 0;
-	    }
+        if (hasUser(user)) {
+            return accountBalanceBase.get(user);
+        } else {
+            return 0;
+        }
     }
 
+    // Set the balance for {@code user} to {@code amount}
+    //  this will override any existing entries.
+    public void setBalance(String user, int amount) {
+        accountBalanceBase.put(user, amount);
+    }
 
-    /** 
-     * set the balance for {@code user} to {@code amount}
-     *  this will override any existing entries
-     */
-
-    
-    public void setBalance(String user, int amount){
-	accountBalanceBase.put(user,amount);
-	    };
-	
-
-    /** 
-     *  Adds amount to balance for {@code user}
-     * 
-     *  if there was no entry for {@code user} add one with 
-     *       {@code balance}
-     */
-    
+    // Adds amount to balance for {@code user}
+    // <p>
+    // if there was no entry for {@code user} add one with
+    // {@code balance}
     public void addBalance(String user, int amount) {
-	setBalance(user,getBalance(user) + amount);
+        setBalance(user, getBalance(user) + amount);
     }
 
-
-    /** 
-     *   Subtracts amount from balance for {@code user}
-     */
-    
+    // Subtracts amount from balance for {@code user}
     public void subtractBalance(String user, int amount) {
-	setBalance(user,getBalance(user) - amount);
+        setBalance(user, getBalance(user) - amount);
     }
 
 
-    /** 
-     * Check balance has at least amount for {@code user}
-     */
-
+    // Check balance has at least amount for {@code user}
     public boolean checkBalance(String user, int amount) {
-	return (getBalance(user) >= amount);
-    }    
+        return (getBalance(user) >= amount);
+    }
 
-    /** 
+    /**
      *
      *  Task 1: Fill in the body of method checkAccountBalanceDeductable()
      *          It has been commented out so that the code compiles.
@@ -155,19 +105,16 @@ public class AccountBalance {
      *   but then one has to backtrack again.
      * Converting the TxOutputList into a AccountBalance is a better approach since the
      *   TxOutputList is usually much smaller than the main AccountBalance.
-     * 
+     *
      * Note amountToCheckForDeduction is not a 2nd amount but the 
      *    but is intended to be a TxEntryListList converted into an 
      *    AccountBalance to check whether it can be deducted.
-     */    
+     */
+//    public boolean checkAccountBalanceDeductable(AccountBalance amountToCheckForDeduction){
+//	    // ...
+//    }
 
-    /*
-    public boolean checkAccountBalanceDeductable(AccountBalance amountToCheckForDeduction){
-	// fill in Body 
-    };
-    */
-    
-    /** 
+    /**
      *
      *  Task 2: Fill in the method checkTxELdeductable 
      *          It has been commented out so that the code compiles.
@@ -177,45 +124,31 @@ public class AccountBalance {
      *
      *   done by first converting the list of txEntries into an accountBalance
      *     and then checking that the resulting accountBalance can be deducted.
-     *   
-     */    
+     *
+     */
+//    public boolean checkTxELdeductable(TxEntryList txel){
+//	    // ...
+//    }
 
-    /*     
-    public boolean checkTxELdeductable(TxEntryList txel){
-	// fill in Body 
-    };
-    */
-    
-    
-    /** 
-     *  Task 3: Fill in the methods subtractTxEL and  addTxEL.
-     *
-     *   Subtract a list of txEntries (txel, usually transaction inputs) from the accountBalance 
-     *
-     *   requires that the list to be deducted is deductable.
-     *   
-     */    
-    
-    
-    public void subtractTxEL(TxEntryList txel){
-	// fill in Body 
+    /**
+     * Task 3: Fill in the methods subtractTxEL and  addTxEL.
+     * <p>
+     * Subtract a list of txEntries (txel, usually transaction inputs) from the accountBalance
+     * <p>
+     * requires that the list to be deducted is deductable.
+     */
+    public void subtractTxEL(TxEntryList txel) {
+        // ...
     }
 
-    
-
-
-
-    /** 
+    /**
      * Add a list of txEntries (txel, usually transaction outputs) to the current accountBalance
-     *
-     */    
+     */
+    public void addTxEL(TxEntryList txel) {
+        // ...
+    }
 
-       public void addTxEL(TxEntryList txel){
-	   // fill in Body 
-       }
-
-
-    /** 
+    /**
      *
      *  Task 4: Fill in the method checkTxValid
      *          It has been commented out so that the code compiles.
@@ -224,57 +157,46 @@ public class AccountBalance {
      *    the sum of outputs is less than the sum of inputs
      *    and the inputs can be deducted from the accountBalance.
      *
-     */    
-
-    /*
-    public boolean checkTxValid(Tx tx){
-	// fill in Body 		
-    };
-    */
-
-    /** 
-     *
-     *  Task 5: Fill in the method processTx
-     *
-     * Process a transaction
-     *    by first deducting all the inputs
-     *    and then adding all the outputs.
-     *
-     */    
-    
-    public void processTx(Tx tx){
-	// fill in Body 
-    };
-    
-
-    /** 
-     * Prints the current state of the accountBalance. 
      */
-    
-    public void print() {
-	for (String user : getUsers()) {
-	    Integer value = getBalance(user);
-	    System.out.println("The balance for " + user + " is " + value); 
-	}
+//    public boolean checkTxValid(Tx tx){
+//	    // ...
+//    }
 
+    /**
+     * Task 5: Fill in the method processTx
+     * <p>
+     * Process a transaction
+     * by first deducting all the inputs
+     * and then adding all the outputs.
+     */
+
+//    public void processTx(Tx tx) {
+//        // ...
+//    }
+
+    /**
+     * Prints the current state of the accountBalance.
+     */
+    public void print() {
+        for (String user : getUsers()) {
+            Integer value = getBalance(user);
+            System.out.println("The balance for " + user + " is " + value);
+        }
     }
 
-
-    /** 
-     *  Task 6: Fill in the testcases as described in the labsheet
-     *    
+    /**
+     * Task 6: Fill in the testcases as described in the labsheet
+     * <p>
      * Testcase
      */
-    
     public static void test() {
-	// fill in Body 
+        // ...
     }
-    
-    /** 
-     * main function running test cases
-     */            
 
+    /**
+     * main function running test cases
+     */
     public static void main(String[] args) {
-	AccountBalance.test();	
+        AccountBalance.test();
     }
 }
