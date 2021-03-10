@@ -89,18 +89,28 @@ public class AccountBalance {
         accBalance.setBalance(keyMap.getPublicKey("C2"),0);
         accBalance.setBalance(keyMap.getPublicKey("C3"),0);
         accBalance.setBalance(keyMap.getPublicKey("D1"),0);
+        accBalance.print(keyMap);
+        System.out.println();
 
         // Set the balance for A1 to 20.
         accBalance.setBalance(keyMap.getPublicKey("A1"),20);
+        accBalance.print(keyMap);
+        System.out.println();
 
         // Add 15 to the balance for B1.
         accBalance.addToBalance(keyMap.getPublicKey("B1"),15);
+        accBalance.print(keyMap);
+        System.out.println();
 
         // Subtract 5 from the balance for B1.
         accBalance.subtractFromBalance(keyMap.getPublicKey("B1"),5);
+        accBalance.print(keyMap);
+        System.out.println();
 
         // Set the balance for C1 to 10.
         accBalance.setBalance(keyMap.getPublicKey("C1"),10);
+        accBalance.print(keyMap);
+        System.out.println();
 
         // Check whether the TxInputList txil1 giving A1 15 units, and B1 5 units
         // (with sample signatures used) can be deducted.
@@ -117,6 +127,7 @@ public class AccountBalance {
         );
         boolean txil1_deductible = accBalance.checkTxInputListCanBeDeducted(txil1);
         System.out.println("txil1: " + txil1_deductible);
+        System.out.println();
 
         // Check whether theTxInputList txil2 giving A1 15 units, and giving A1 again 15 units
         //  can be deducted.
@@ -129,9 +140,17 @@ public class AccountBalance {
         );
         boolean txil2_deductible = accBalance.checkTxInputListCanBeDeducted(txil2);
         System.out.println("txil2: " + txil2_deductible);
+        System.out.println();
 
-        // Deduct txil1from the AccountBalance.
+        // Deduct txil1 from the AccountBalance.
+        int bal_a1 = accBalance.getBalance(keyMap.getPublicKey("A1"));
+        int bal_b1 = accBalance.getBalance(keyMap.getPublicKey("B1"));
         accBalance.subtractTxInputList(txil1);
+        System.out.println("txil1 deducted from account balance:");
+        System.out.println("\tA1: " + bal_a1 + " -> " + accBalance.getBalance(keyMap.getPublicKey("A1")));
+        System.out.println("\tB1: " + bal_b1 + " -> " + accBalance.getBalance(keyMap.getPublicKey("B1")));
+        accBalance.print(keyMap);
+        System.out.println();
 
         // Create a TxOutputList corresponding to txil2 which gives A1 twice 15 Units,
         //  and add it to the AccountBalance.
@@ -141,11 +160,16 @@ public class AccountBalance {
         // They should not be called `sender1`, `sender2`, etc. but rather they should
         //  be called `recipient1`, `recipient2`, etc.
         // I'm not sure how one would create it such that it is 'corresponding to txil2'.
+        int bal = accBalance.getBalance(keyMap.getPublicKey("A1"));
         TxOutputList txil2_out = new TxOutputList(
             keyMap.getPublicKey("A1"),15,
             keyMap.getPublicKey("A1"),15
         );
         accBalance.addTxOutputList(txil2_out);
+        System.out.println("txil2 added to account balance");
+        System.out.println("\tA1: " + bal + " -> " + accBalance.getBalance(keyMap.getPublicKey("A1")));
+        accBalance.print(keyMap);
+        System.out.println();
 
         // Create a correctly signed input, where A1 is spending 30, referring to an output list
         //  giving B2 10 and C1 20.
@@ -166,6 +190,7 @@ public class AccountBalance {
         );
         boolean valid1 = in1.checkSignature(out1);
         System.out.println("valid1: " + valid1);
+        System.out.println();
 
         // Create a wrongly signed input, which gives A1 30, and uses instead of the correctly
         //  created signature an example signature (example signatures are provided in the code).
@@ -183,6 +208,7 @@ public class AccountBalance {
         );
         boolean valid2 = in2.checkSignature(out2);
         System.out.println("valid2: " + valid2);
+        System.out.println();
 
         // Create a transaction tx1 which takes as input for A1 35 units and gives B2 10,C2 10,
         //  and returns the change (whatever is left) to A2.
@@ -206,6 +232,7 @@ public class AccountBalance {
         boolean tx1_valid = tx1.checkTransactionAmountsValid() && tx1.checkSignaturesValid();
         System.out.println("tx1_valid: " + tx1_valid);
         accBalance.processTransaction(tx1);
+        System.out.println();
     }
 
     // main function running test cases
