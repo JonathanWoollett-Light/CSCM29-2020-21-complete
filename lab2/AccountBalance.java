@@ -196,7 +196,7 @@ public class AccountBalance {
      */
     public static void test() {
         // Create an emptyAccountBalance and add to it users Alice,
-        //  Bob, Carol, David, ini-tialised with the amount 0 for each user,
+        //  Bob, Carol, David, initialised with the amount 0 for each user,
         AccountBalance accoutBalance = new AccountBalance();
         accoutBalance.addAccount("Alice",0);
         accoutBalance.addAccount("Carol",0);
@@ -231,10 +231,10 @@ public class AccountBalance {
         );
         System.out.println("txel2:"+accoutBalance.checkTxELdeductable(txel2));
 
-        // deduct txel1from the ledger
+        // deduct txel1 from the ledger
         accoutBalance.subtractTxEL(txel1);
 
-        // add txel2to the ledger
+        // add txel2 to the ledger
         accoutBalance.addTxEL(txel2);
 
         // Create a transaction tx1 which takes as input for Alice 40 units

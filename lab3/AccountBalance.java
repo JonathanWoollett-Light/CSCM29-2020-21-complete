@@ -166,7 +166,7 @@ public class AccountBalance {
             keyMap.getPublicKey("A1"),15
         );
         accBalance.addTxOutputList(txil2_out);
-        System.out.println("txil2 added to account balance");
+        System.out.println("txil2 added to account balance:");
         System.out.println("\tA1: " + bal + " -> " + accBalance.getBalance(keyMap.getPublicKey("A1")));
         accBalance.print(keyMap);
         System.out.println();
