@@ -232,6 +232,38 @@ public class AccountBalance {
         boolean tx1_valid = tx1.checkTransactionAmountsValid() && tx1.checkSignaturesValid();
         System.out.println("tx1_valid: " + tx1_valid);
         accBalance.processTransaction(tx1);
+        accBalance.print(keyMap);
+        System.out.println();
+
+        // Create a transaction tx2 which takes as inputs from B2 10, C2 10, and as outputs
+        //  given D1 15 and C3 the change (whatever is left)
+        TxOutputList tx2_out = new TxOutputList(
+                keyMap.getPublicKey("D1"),15,
+                keyMap.getPublicKey("C3"),5 // 5 = 10 + 10 - 10
+        );
+
+        byte[] tx2_mes1 = tx2_out.getMessageToSign(keyMap.getPublicKey("B2"),10);
+        byte[] tx2_sig1 = bobWallet.signMessage(tx2_mes1, "B2");
+
+        byte[] tx2_mes2 = tx2_out.getMessageToSign(keyMap.getPublicKey("C2"),10);
+        byte[] tx2_sig2 = carolWallet.signMessage(tx2_mes2, "C2");
+
+        TxInputList tx2_in = new TxInputList(
+                keyMap.getPublicKey("B2"),10,tx2_sig1,
+                keyMap.getPublicKey("C2"),10,tx2_sig2
+        );
+        Transaction tx2 =  new Transaction(tx2_in,tx2_out);
+        System.out.println();
+
+        // Check whether the signature is approved for the transaction input, and whether
+        //  the transaction is valid.
+        // Then update the AccountBalance using that transaction.
+        boolean tx2_in_approved = tx2_in.checkSignature(tx2_out);
+        System.out.println("tx2_in_approved: " + tx2_in_approved);
+        boolean tx2_valid = tx2.checkTransactionAmountsValid() && tx2.checkSignaturesValid();
+        System.out.println("tx2_valid: " + tx2_valid);
+        accBalance.processTransaction(tx2);
+        accBalance.print(keyMap);
         System.out.println();
     }
 
